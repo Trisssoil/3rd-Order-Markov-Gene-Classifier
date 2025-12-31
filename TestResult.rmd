@@ -1,0 +1,128 @@
+---
+title: "Markov Gene Prediction Model Test Result"
+output:
+  html_document:
+    df_print: paged
+date: "2025-12-31"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r cars}
+library(tidyverse)
+
+scores<-read.csv("scores.csv")
+
+pos <- scores %>%
+  filter(label == "pos") %>%
+  select(gene_name, score)
+
+neg <- scores %>%
+  filter(label == "neg") %>%
+  select(gene_name, score)
+
+pos_ks <- ks.test(pos$score, pnorm, mean(pos$score), sd(pos$score))
+neg_ks <- ks.test(neg$score, pnorm, mean(neg$score), sd(neg$score))
+
+pos_hist <- ggplot(pos, aes(x = score)) +
+  geom_histogram(bins = 10) +
+  theme_minimal(base_size = 14) +
+  labs(
+    title = "Genes",
+    x = "Log-likelihood ratio",
+    y = "Count"
+  ) +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    plot.title = element_text(size = 28, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 25),
+    axis.title.y = element_text(size = 25),
+    axis.text = element_text(size = 20)
+  )
+
+neg_hist <- ggplot(neg, aes(x = score)) +
+  geom_histogram(bins = 10) +
+  theme_minimal(base_size = 14) +
+  labs(
+    title = "Control",
+    x = "Log-likelihood ratio",
+    y = "Count"
+  ) +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    plot.title = element_text(size = 30, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 25),
+    axis.title.y = element_text(size = 25),
+    axis.text = element_text(size = 20)
+  )
+
+
+t_test <- t.test(score ~ label, data = scores, var.equal = FALSE)
+
+box <- ggplot(scores, aes(x = label, y = score)) +
+  geom_boxplot(
+    width = 0.5,
+    fill = "grey70",
+    color = "black",
+    outlier.shape = 16,
+    outlier.size = 2
+  ) +
+  theme_minimal(base_size = 14) +
+  labs(
+    title = "Gene vs Control Score Distributions w/ 3rd-Order Markov Model",
+    x = "",
+    y = "Log-likelihood ratio"
+  ) +
+  scale_x_discrete(labels = c(pos = "Genes", neg = "Control")) +
+  theme(
+    legend.position = "none",
+    text = element_text(family = "Times New Roman"),
+    plot.title = element_text(face = "bold", hjust = 0.5, size = 15),
+    axis.text.x = element_text(size = 13),
+    axis.text.y = element_text(size = 12),
+    axis.title.y = element_text(size = 14)
+  )
+
+```
+:::: {style="display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px;"}
+
+::: {}
+```{r, echo=FALSE}
+pos_ks
+neg_ks
+```
+:::: {style="display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px;"}
+::: {}
+```{r, echo=FALSE}
+pos_hist
+```
+:::
+:::{}
+```{r, echo=FALSE}
+neg_hist
+```
+:::
+::::
+:::
+:::{}
+```{r, echo=FALSE}
+t_test
+box
+```
+:::
+::::
+
+
+```{r pressure, echo=FALSE}
+#pos_ks
+#neg_ks
+#pos_hist
+#neg_hist
+
+#t_test
+#box
+```
+
+
