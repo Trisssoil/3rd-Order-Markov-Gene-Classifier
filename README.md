@@ -44,3 +44,7 @@ gene and control groups follow approximately normal distributions. Welch’s
 *t*-test indicates a statistically significant difference between protein-coding
 sequences and shuffled controls, demonstrating the model’s ability to distinguish
 gene-like sequence structure.
+
+## Disclaimer
+The programs are partly wrote and debugged from Chat GPT.
+The gene sequences are downloaded from NCBI.
